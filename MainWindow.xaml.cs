@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Diagnostics;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Timers;
 using System.Windows;
@@ -39,6 +40,9 @@ namespace Passwd
 		public MainWindow()
         {
             InitializeComponent();
+
+			notificationTimer.Tick += new EventHandler(NotificationTimerTick);
+			notificationTimer.Interval = TimeSpan.FromMilliseconds(10);
 
 			DataContext = ViewModel;
 
@@ -133,22 +137,25 @@ namespace Passwd
 
 		private void CopyLogin_Click(object sender, RoutedEventArgs e)
 		{
-			if (!string.IsNullOrEmpty(LoginText.Text)) Clipboard.SetText(LoginText.Text);
-
+			if (string.IsNullOrEmpty(LoginText.Text)) return; 
+			
+			Clipboard.SetText(LoginText.Text);
 			ShowNotification("Copied!", notificationDelay);
 		}
 
 		private void CopyEmail_Click(object sender, RoutedEventArgs e)
 		{
-			if (!string.IsNullOrEmpty(EmailText.Text)) Clipboard.SetText(EmailText.Text);
-
+			if (string.IsNullOrEmpty(EmailText.Text)) return; 
+			
+			Clipboard.SetText(EmailText.Text);
 			ShowNotification("Copied!", notificationDelay);
 		}
 
 		private void CopyPassword_Click(object sender, RoutedEventArgs e)
 		{
-			if (!string.IsNullOrEmpty(PassTextMask.Password)) Clipboard.SetText(PassTextMask.Password);
-
+			if (string.IsNullOrEmpty(PassTextMask.Password)) return; 
+			
+			Clipboard.SetText(PassTextMask.Password);
 			ShowNotification("Copied!", notificationDelay);
 		}
 
@@ -171,8 +178,9 @@ namespace Passwd
 
 		private void CopyNumberList_Click(object sender, RoutedEventArgs e)
 		{
-			if (!string.IsNullOrEmpty(NumberText.Text)) Clipboard.SetText(NumberText.Text);
-
+			if (string.IsNullOrEmpty(NumberText.Text)) return; 
+				
+			Clipboard.SetText(NumberText.Text);
 			ShowNotification("Copied!", notificationDelay);
 		}
 
@@ -386,24 +394,12 @@ namespace Passwd
 			startTime = time;
 			timeElapsed = startTime;
 
-			TimerStart();
-		}
-
-		private void TimerStart()
-		{
-			notificationTimer = new DispatcherTimer();
-			notificationTimer.Tick += new EventHandler(NotificationTimerTick);
-			notificationTimer.Interval = TimeSpan.FromMilliseconds(10);
 			notificationTimer.Start();
 		}
 
-		private async void NotificationTimerTick(object sender, EventArgs e)
+		private void NotificationTimerTick(object sender, EventArgs e)
 		{
 			timeElapsed--;
-
-			var newOpacity = timeElapsed / startTime;
-
-			NotificationOverlay.Opacity = newOpacity;
 
 			if (timeElapsed <= 0)
 			{
@@ -411,6 +407,13 @@ namespace Passwd
 				NotificationOverlay.Opacity = 1;
 				notificationTimer.Stop();
 			}
+			else
+			{
+				var newOpacity = timeElapsed / startTime;
+				NotificationOverlay.Opacity = newOpacity;
+			}
+
+			Trace.WriteLine($"TimeElapsed={timeElapsed} / StartTime={startTime}");
 		}
 	}
 }
