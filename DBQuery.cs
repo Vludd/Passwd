@@ -79,44 +79,6 @@ namespace Passwd
 			}
 		}
 
-		public static void AddNewRecord(string title, string description, string login, 
-			string password, string email_list, string number_list)
-		{
-			SQLiteConnection sqlConnection = DBHelper.Connect();
-
-			if (sqlConnection.State != ConnectionState.Open) sqlConnection.Open();
-
-			try
-			{
-				SQLiteCommand sqlCommand = new();
-
-				string sqlQuery = $"INSERT INTO {DBHelper.TableName} " +
-					"(title, description, login, pass, email_list, number_list)\n" +
-					"VALUES (@title, @description, @login, @pass, @email_list, @number_list);";
-
-				sqlCommand.Connection = sqlConnection;
-				sqlCommand.CommandText = sqlQuery;
-
-				sqlCommand.Parameters.Add("@title", DbType.String).Value = title;
-				sqlCommand.Parameters.Add("@description", DbType.String).Value = description;
-				sqlCommand.Parameters.Add("@login", DbType.String).Value = login;
-				sqlCommand.Parameters.Add("@pass", DbType.String).Value = password;
-				sqlCommand.Parameters.Add("@email_list", DbType.String).Value = email_list;
-				sqlCommand.Parameters.Add("@number_list", DbType.String).Value = number_list;
-
-				var exec = sqlCommand.ExecuteNonQuery();
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-			finally
-			{
-				sqlConnection.Close();
-				sqlConnection.Dispose();
-			}
-		}
-
 		public static void GetAllRecords(ObservableCollection<AccountRecord> recordList)
 		{
 			CreateTable();
@@ -172,6 +134,44 @@ namespace Passwd
 				}
 
 				reader.Close();
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message);
+			}
+			finally
+			{
+				sqlConnection.Close();
+				sqlConnection.Dispose();
+			}
+		}
+
+		public static void AddNewRecord(string title, string description, string login, 
+			string password, string email_list, string number_list)
+		{
+			SQLiteConnection sqlConnection = DBHelper.Connect();
+
+			if (sqlConnection.State != ConnectionState.Open) sqlConnection.Open();
+
+			try
+			{
+				SQLiteCommand sqlCommand = new();
+
+				string sqlQuery = $"INSERT INTO {DBHelper.TableName} " +
+					"(title, description, login, pass, email_list, number_list)\n" +
+					"VALUES (@title, @description, @login, @pass, @email_list, @number_list);";
+
+				sqlCommand.Connection = sqlConnection;
+				sqlCommand.CommandText = sqlQuery;
+
+				sqlCommand.Parameters.Add("@title", DbType.String).Value = title;
+				sqlCommand.Parameters.Add("@description", DbType.String).Value = description;
+				sqlCommand.Parameters.Add("@login", DbType.String).Value = login;
+				sqlCommand.Parameters.Add("@pass", DbType.String).Value = password;
+				sqlCommand.Parameters.Add("@email_list", DbType.String).Value = email_list;
+				sqlCommand.Parameters.Add("@number_list", DbType.String).Value = number_list;
+
+				var exec = sqlCommand.ExecuteNonQuery();
 			}
 			catch (Exception ex)
 			{

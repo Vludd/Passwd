@@ -1,17 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Passwd
@@ -33,9 +23,9 @@ namespace Passwd
 
 		private float startTime;
 
-		private float notificationDelay = 100f;
+		private readonly float notificationDelay = 100f;
 
-		DispatcherTimer notificationTimer = new DispatcherTimer();
+		private readonly DispatcherTimer notificationTimer = new DispatcherTimer();
 
 		public MainWindow()
         {
@@ -186,51 +176,9 @@ namespace Passwd
 
 		private void RecordsListBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
-			var recordIndex = RecordListView.SelectedIndex;
+			var index = RecordListView.SelectedIndex;
 
-
-			if (recordIndex == -1)
-			{
-				ResetFieldsAfterAction();
-				prevSelectedRecord = -1;
-				return;
-			}
-
-			prevSelectedRecord = recordIndex;
-
-			ContentGrid.IsEnabled = true;
-
-			LoginText.Text = ViewModel.RecordList[recordIndex].Login;
-			PassTextMask.Password = ViewModel.RecordList[recordIndex].Password;
-			PassTextUnmask.Text = ViewModel.RecordList[recordIndex].Password;
-
-			var emailList = ViewModel.RecordList[recordIndex].EmailList;
-			foreach (var email in emailList)
-			{
-				if (emailList.IndexOf(email) == 0)
-				{
-					EmailText.Text = email;
-				}
-				else
-				{
-					EmailText.Text += $", {email}";
-				}
-			}
-
-			var numberList = ViewModel.RecordList[recordIndex].NumberList;
-			foreach (var number in numberList)
-			{
-				if (numberList.IndexOf(number) == 0)
-				{
-					NumberText.Text = number;
-				}
-				else
-				{
-					NumberText.Text += $", {number}";
-				}
-			}
-
-			RecordInfo.Text = ViewModel.RecordList[recordIndex].Description;
+			SelectRecord(index);
 		}
 
 		private void AddNewRecord_Click(object sender, RoutedEventArgs e)
@@ -361,6 +309,68 @@ namespace Passwd
 			}
 		}
 
+		private void FindRecord(string searchText)
+		{
+			foreach (var record in ViewModel.RecordList)
+			{
+				if (record.Title.ToLower().Contains(searchText.Trim().ToLower()))
+				{
+					SelectRecord(ViewModel.RecordList.IndexOf(record));
+					return;
+				}
+			}
+
+			MessageWindow.Show("No record found!", "There is no record with the specified title in the list");
+		}
+
+		private void SelectRecord(int recordIndex)
+		{
+			if (recordIndex == -1)
+			{
+				ResetFieldsAfterAction();
+				prevSelectedRecord = -1;
+				return;
+			}
+
+			RecordListView.SelectedIndex = recordIndex;
+
+			prevSelectedRecord = recordIndex;
+
+			ContentGrid.IsEnabled = true;
+
+			LoginText.Text = ViewModel.RecordList[recordIndex].Login;
+			PassTextMask.Password = ViewModel.RecordList[recordIndex].Password;
+			PassTextUnmask.Text = ViewModel.RecordList[recordIndex].Password;
+
+			var emailList = ViewModel.RecordList[recordIndex].EmailList;
+			foreach (var email in emailList)
+			{
+				if (emailList.IndexOf(email) == 0)
+				{
+					EmailText.Text = email;
+				}
+				else
+				{
+					EmailText.Text += $", {email}";
+				}
+			}
+
+			var numberList = ViewModel.RecordList[recordIndex].NumberList;
+			foreach (var number in numberList)
+			{
+				if (numberList.IndexOf(number) == 0)
+				{
+					NumberText.Text = number;
+				}
+				else
+				{
+					NumberText.Text += $", {number}";
+				}
+			}
+
+			RecordInfo.Text = ViewModel.RecordList[recordIndex].Description;
+		}
+
 		private void ResetFieldsAfterAction()
 		{
 			LoginText.Text = "";
@@ -381,6 +391,7 @@ namespace Passwd
 
 			if (prevSelectedRecord == -1)
 			{
+				RecordListView.Focus();
 				ResetFieldsAfterAction();
 			}
 		}
@@ -413,7 +424,28 @@ namespace Passwd
 				NotificationOverlay.Opacity = newOpacity;
 			}
 
-			Trace.WriteLine($"TimeElapsed={timeElapsed} / StartTime={startTime}");
+			//Trace.WriteLine($"TimeElapsed={timeElapsed} / StartTime={startTime}");
+		}
+
+		private void SearchButton_Click(object sender, RoutedEventArgs e)
+		{
+			if (!string.IsNullOrEmpty(SearchInput.Text))
+			{
+				FindRecord(SearchInput.Text);
+				RecordListView.Focus();
+			}
+		}
+
+		private void SearchInput_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+			{
+				if (!string.IsNullOrEmpty(SearchInput.Text))
+				{
+					FindRecord(SearchInput.Text);
+					RecordListView.Focus();
+				}
+			}
 		}
 	}
 }
