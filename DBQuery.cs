@@ -119,7 +119,6 @@ namespace Passwd
 
 		public static void GetAllRecords(ObservableCollection<AccountRecord> recordList)
 		{
-			//DropTable();
 			CreateTable();
 
 			SQLiteConnection sqlConnection = DBHelper.Connect();

@@ -307,10 +307,12 @@
         </Grid>
         <Grid x:Name="NotificationOverlay" 
               IsHitTestVisible="False"
-              Opacity="0.5">
+              Opacity="1"
+              Visibility="Hidden">
             <Border Background="#706884"
                     CornerRadius="5"
-                    VerticalAlignment="Center"
+                    Margin="50"
+                    VerticalAlignment="Top"
                     HorizontalAlignment="Center">
                 <TextBlock x:Name="NotificationLabel" 
                            Text="Test notification message!"

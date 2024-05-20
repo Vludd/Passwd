@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Passwd
 {
@@ -31,9 +32,11 @@ namespace Passwd
 
 		private float startTime;
 
-		private System.Timers.Timer notificationTimer = new System.Timers.Timer();
+		private float notificationDelay = 100f;
 
-        public MainWindow()
+		DispatcherTimer notificationTimer = new DispatcherTimer();
+
+		public MainWindow()
         {
             InitializeComponent();
 
@@ -131,16 +134,22 @@ namespace Passwd
 		private void CopyLogin_Click(object sender, RoutedEventArgs e)
 		{
 			if (!string.IsNullOrEmpty(LoginText.Text)) Clipboard.SetText(LoginText.Text);
+
+			ShowNotification("Copied!", notificationDelay);
 		}
 
 		private void CopyEmail_Click(object sender, RoutedEventArgs e)
 		{
 			if (!string.IsNullOrEmpty(EmailText.Text)) Clipboard.SetText(EmailText.Text);
+
+			ShowNotification("Copied!", notificationDelay);
 		}
 
 		private void CopyPassword_Click(object sender, RoutedEventArgs e)
 		{
-			if (!string.IsNullOrEmpty(PassTextMask.Password)) Clipboard.SetText(PassTextMask.Password); 
+			if (!string.IsNullOrEmpty(PassTextMask.Password)) Clipboard.SetText(PassTextMask.Password);
+
+			ShowNotification("Copied!", notificationDelay);
 		}
 
 		private void ShowPassButton_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -163,21 +172,19 @@ namespace Passwd
 		private void CopyNumberList_Click(object sender, RoutedEventArgs e)
 		{
 			if (!string.IsNullOrEmpty(NumberText.Text)) Clipboard.SetText(NumberText.Text);
+
+			ShowNotification("Copied!", notificationDelay);
 		}
 
 		private void RecordsListBox_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
 		{
 			var recordIndex = RecordListView.SelectedIndex;
 
+
 			if (recordIndex == -1)
 			{
 				ResetFieldsAfterAction();
 				prevSelectedRecord = -1;
-				return;
-			}
-
-			if (recordIndex == prevSelectedRecord)
-			{
 				return;
 			}
 
@@ -244,6 +251,8 @@ namespace Passwd
 				{
 					NotDBOverlay.Visibility = Visibility.Visible;
 				}
+
+				ShowNotification("Record has been added!", notificationDelay);
 			}
 		}
 
@@ -275,6 +284,8 @@ namespace Passwd
 				{
 					NotDBOverlay.Visibility = Visibility.Visible;
 				}
+
+				ShowNotification("Record has been deleted!", notificationDelay);
 			}
 		}
 
@@ -336,7 +347,7 @@ namespace Passwd
 				DBQuery.UpdateRecord(ViewModel.RecordList[recordIndex].Id, newRecordTitle, newRecordDesc, newRecordLogin, newRecordPass, newRecordEmails, newRecordNumbers);
 				DBQuery.GetAllRecords(ViewModel.RecordList);
 
-				ShowNotification("Record has been updated!", 3);
+				ShowNotification("Record has been updated!", notificationDelay);
 
 				ResetFieldsAfterAction();
 			}
@@ -350,9 +361,10 @@ namespace Passwd
 			EmailText.Text = "";
 			NumberText.Text = "";
 			RecordInfo.Text = "";
+			ContentGrid.IsEnabled = false;
 
 			RecordListView.SelectedIndex = -1;
-			ContentGrid.IsEnabled = false;
+			RecordListView.UnselectAll();
 		}
 
 		private void RecordListView_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -369,42 +381,36 @@ namespace Passwd
 		{
 			NotificationLabel.Text = text;
 
-			NotificationOverlay.Opacity = 1;
 			NotificationOverlay.Visibility = Visibility.Visible;
 
-			TimerStart(time);
+			startTime = time;
+			timeElapsed = startTime;
+
+			TimerStart();
 		}
 
-		private void TimerStart(float time)
+		private void TimerStart()
 		{
-			timeElapsed = time * 1000;
-			startTime = time * 1000;
-
-			notificationTimer = new(1);
-			notificationTimer.AutoReset = false;
-			notificationTimer.Elapsed += new ElapsedEventHandler(NotificationTimerTick);
+			notificationTimer = new DispatcherTimer();
+			notificationTimer.Tick += new EventHandler(NotificationTimerTick);
+			notificationTimer.Interval = TimeSpan.FromMilliseconds(10);
 			notificationTimer.Start();
 		}
 
-		private void NotificationTimerTick(Object source, ElapsedEventArgs e)
+		private async void NotificationTimerTick(object sender, EventArgs e)
 		{
+			timeElapsed--;
+
 			var newOpacity = timeElapsed / startTime;
 
-			//NotificationOverlay.Opacity = newOpacity;
-
-			if (NotificationOverlay.Opacity <= 0)
-			{
-				NotificationOverlay.Visibility = Visibility.Hidden;
-				notificationTimer.Stop();
-			}
+			NotificationOverlay.Opacity = newOpacity;
 
 			if (timeElapsed <= 0)
 			{
 				NotificationOverlay.Visibility = Visibility.Hidden;
+				NotificationOverlay.Opacity = 1;
 				notificationTimer.Stop();
 			}
-
-			timeElapsed--;
 		}
 	}
 }
