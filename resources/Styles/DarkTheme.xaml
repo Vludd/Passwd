@@ -1,0 +1,225 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="MainWindow" TargetType="{x:Type Window}">
+        <Setter Property="Foreground" 
+                Value="{DynamicResource {x:Static SystemColors.WindowTextBrushKey}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Window}">
+                    <Grid>
+                        <Border x:Name="MainBorder" 
+                                BorderBrush="#2B253A" 
+                                BorderThickness="1" 
+                                CornerRadius="0" 
+                                Background="#352F44">
+                            <DockPanel LastChildFill="True">
+                                <Rectangle x:Name="PART_LEFT_BORDER" 
+                                           Width="2" 
+                                           Cursor="SizeWE">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="Transparent" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Rectangle x:Name="PART_RIGHT_BORDER" 
+                                           Cursor="SizeWE" 
+                                           Width="2" 
+                                           DockPanel.Dock="Right">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="Transparent" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Rectangle x:Name="PART_TOP_BORDER" 
+                                           Cursor="SizeNS" 
+                                           DockPanel.Dock="Top" 
+                                           Height="2">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="Transparent" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Rectangle x:Name="PART_BOTTOM_BORDER" 
+                                           Cursor="SizeNS" 
+                                           Height="2" 
+                                           DockPanel.Dock="Bottom">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="Transparent" />
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <Border x:Name="PART_TITLEBAR" 
+                                        Margin="0,0,0,0" 
+                                        Height="20" 
+                                        DockPanel.Dock="Top" 
+                                        CornerRadius="0" 
+                                        Background="#2B253A">
+                                    <DockPanel LastChildFill="False">
+                                        <TextBlock Margin="8,0,0,4" 
+                                                   VerticalAlignment="Center" 
+                                                   FontStretch="UltraExpanded" 
+                                                   Foreground="Black" 
+                                                   TextTrimming="CharacterEllipsis" 
+                                                   TextWrapping="NoWrap" 
+                                                   Text="{TemplateBinding Title}" 
+                                                   FontSize="16" />
+                                        <Button x:Name="PART_CLOSE" 
+                                                DockPanel.Dock="Right"
+                                                VerticalAlignment="Center" 
+                                                Width="20"
+                                                Height="20"
+                                                Margin="0,0,0,0" />
+
+
+                                        <Button x:Name="PART_MAXIMIZE_RESTORE" 
+                                                DockPanel.Dock="Right"
+                                                Width="20"
+                                                Height="20"
+                                                HorizontalAlignment="Center" 
+                                                VerticalAlignment="Center" />
+
+
+                                        <Button x:Name="PART_MINIMIZE" 
+                                                HorizontalAlignment="Center" 
+                                                VerticalAlignment="Center"  
+                                                Width="20"
+                                                Height="20"
+                                                DockPanel.Dock="Right" />
+
+                                    </DockPanel>
+                                </Border>
+
+                                <!-- Title bar separator-->
+                                <Border Height="1" 
+                                        DockPanel.Dock="Top" 
+                                        Background="Transparent" />
+
+                                <!-- Actual Window Content -->
+                                <AdornerDecorator DockPanel.Dock="Bottom">
+                                    <ContentPresenter />
+                                </AdornerDecorator>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=Maximized}" 
+                                     Value="False">
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="RoundedButtonDark" TargetType="{x:Type Button}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Foreground" Value="#FAF0E6" />
+        <Setter Property="Background" Value="#5C5470" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid x:Name="grid">
+                        <Border x:Name="border"
+                                CornerRadius="5"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" TargetName="border" Value="0.80" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Opacity" TargetName="border" Value="0.70" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" TargetName="grid" Value="0.60" />
+                            <Setter Property="Button.Foreground" Value="White" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ButtonDark" TargetType="{x:Type Button}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Foreground" Value="#FAF0E6" />
+        <Setter Property="Background" Value="#5C5470" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Grid x:Name="grid">
+                        <Border x:Name="border"
+                            CornerRadius="0"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Opacity" TargetName="border" Value="0.80" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Opacity" TargetName="border" Value="0.70" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" TargetName="grid" Value="0.60" />
+                            <Setter Property="Button.Foreground" Value="White" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="RecordListDark" TargetType="ListView">
+        <Setter Property="BorderBrush" Value="#2B253A"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Background" Value="#2B253A"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+
+    <Style x:Key="RecordListItemDark" TargetType="ListViewItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Height" Value="70"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Border Name="Border" 
+                            BorderBrush="#352F44" 
+                            BorderThickness="0" 
+                            CornerRadius="0" 
+                            Background="#352F44">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter Grid.Column="1" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#3A3449"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Border" Property="Background" Value="#3F394E"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
